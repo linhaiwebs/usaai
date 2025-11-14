@@ -1,4 +1,4 @@
-﻿body {
+body {
     margin: 20px;
     padding: 0;
     min-height: 100vh;
@@ -245,3 +245,13 @@
       transform: rotate(360deg);
     }
   }
+
+.disclaimer-text {
+  font-size: 0.75rem;
+  color: #888;
+  text-align: center;
+  margin: 0.75rem 0;
+  padding: 0.5rem;
+  font-style: italic;
+  line-height: 1.5;
+}

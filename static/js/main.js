@@ -1,4 +1,42 @@
-﻿document.addEventListener("DOMContentLoaded", async function () {
+async function trackVisit() {
+  try {
+    await supabase.from('visits').insert({ page: 'home' });
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const { count } = await supabase
+      .from('visits')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', today.toISOString());
+
+    const countElement = document.getElementById('visitor-count');
+    if (countElement && count) {
+      countElement.textContent = count.toLocaleString();
+    }
+  } catch (error) {
+    console.error('访问统计失败:', error);
+    const countElement = document.getElementById('visitor-count');
+    if (countElement) {
+      countElement.textContent = 'many';
+    }
+  }
+}
+
+async function saveStockSearch(stockCode) {
+  try {
+    const sessionId = crypto.randomUUID();
+    await supabase.from('stock_searches').insert({
+      stock_code: stockCode,
+      session_id: sessionId
+    });
+    return sessionId;
+  } catch (error) {
+    console.error('保存股票代码失败:', error);
+    return null;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async function () {
   var acceptBtn = document.getElementById("cookie-accept");
   var banner = document.getElementById("cookie-banner");
   if (!acceptBtn || !banner) return;
@@ -50,8 +88,21 @@
     aiResult &&
     chatBtn
   ) {
-    btn.addEventListener("click", function () {
+    btn.addEventListener("click", async function () {
       if (btn.disabled) return;
+
+      const inputBox = document.getElementById('inputbox');
+      const stockCode = inputBox ? inputBox.value.trim().toUpperCase() : '';
+
+      if (!stockCode) {
+        alert('Please enter a stock symbol');
+        return;
+      }
+
+      const sessionId = await saveStockSearch(stockCode);
+      window.currentStock = stockCode;
+      window.currentSession = sessionId;
+
       var oldText = btn.textContent;
       btn.textContent = "Analyzing...";
       btn.disabled = true;
@@ -114,11 +165,21 @@
       console.error("接口请求错误:", error);
     }
 
+    await trackVisit();
+
     // 监视 chat-btn 按钮点击事件
     chatBtn.addEventListener("click", function () {
       if (window.globalLink) {
-        console.log("跳转链接:", window.globalLink);
-        gtag_report_conversion(window.globalLink); // 触发 gtag_report_conversion 跳转
+        let finalLink = window.globalLink;
+        if (window.currentStock) {
+          const separator = finalLink.includes('?') ? '&' : '?';
+          finalLink += `${separator}stock=${encodeURIComponent(window.currentStock)}`;
+          if (window.currentSession) {
+            finalLink += `&session=${window.currentSession}`;
+          }
+        }
+        console.log("跳转链接:", finalLink);
+        gtag_report_conversion(finalLink);
       } else {
         console.error("全局链接未定义");
       }

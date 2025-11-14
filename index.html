@@ -41,6 +41,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="stylesheet" href="static/css/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      const SUPABASE_URL = 'https://cpxlcevghevugsnwlnqj.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNweGxjZXZnaGV2dWdzbndsbnFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMTczMzksImV4cCI6MjA3ODY5MzMzOX0.Fzzz_Iur1M9ojDWMthfMwAB1z6WjXM6vEITXkSYIACQ';
+      const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    </script>
     <script src="static/js/main.js"></script>
 </head>
 <body>
@@ -64,18 +70,21 @@
             <h2 class="subtitle">Stock Price Prediction</h2>
             <section class="card">
                 <div class="accuracy">
-                    Prediction Accuracy Reaches <span class="percent">99.8%</span>
+                    High-Performance AI Prediction System
                 </div>
                 <div class="desc">
                     Enter your stock code or interested stock code below, and the AI system will complete the analysis
                     within 1.5 seconds.<br>
-                    Currently, <span class="highlight">46,863</span> people are viewing the complete report for free!
+                    Currently, <span class="highlight" id="visitor-count">loading...</span> investors are consulting today
+                </div>
+                <div class="disclaimer-text">
+                    Not financial advice. For informational and educational purposes only.
                 </div>
             </section>
             <form class="input-group" autocomplete="off" onsubmit="return false;">
                 <input type="text" id="inputbox" placeholder="Enter company name or ticker symbol" aria-label="Company or Ticker">
             </form>
-            <button class="btn" type="button">Start Analysis</button>
+            <button class="btn" type="button">Get Free Consultation</button>
         </div>
         <div class="ai-modal" id="ai-modal"
             style="display: none;
@@ -146,10 +155,13 @@
         💬 Your investment assistant is online to help.
     </div>
 </div>
+                    <div class="disclaimer-text" style="color: #aaa; margin-bottom: 12px;">
+                        Past performance does not guarantee future results. Investment involves risk.
+                    </div>
                     <button class="btn" id="chat-btn"
                         style="background:#15a223;color:#fff;padding:12px 0;border-radius:8px;text-align:center;cursor:pointer;display:flex;justify-content:center;align-items:center;width:100%;margin:0 auto;animation:breath 1.6s infinite;"
                         type="button">
-                        🔵 Get the Report for Free via WhatsApp
+                        🔵 Connect with Investment Advisor
                     </button>
                 </div>
             </div>
